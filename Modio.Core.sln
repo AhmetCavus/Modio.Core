@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modio.Core", "Modio.Core\Modio.Core.csproj", "{05E332D5-64B0-473C-A46F-6FCFCECFFB22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modio.Core.Test", "Modio.Core.Test\Modio.Core.Test.csproj", "{F78EE0EC-C665-4C2B-9A6E-9DD4E4F68829}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{05E332D5-64B0-473C-A46F-6FCFCECFFB22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05E332D5-64B0-473C-A46F-6FCFCECFFB22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05E332D5-64B0-473C-A46F-6FCFCECFFB22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F78EE0EC-C665-4C2B-9A6E-9DD4E4F68829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F78EE0EC-C665-4C2B-9A6E-9DD4E4F68829}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F78EE0EC-C665-4C2B-9A6E-9DD4E4F68829}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F78EE0EC-C665-4C2B-9A6E-9DD4E4F68829}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
