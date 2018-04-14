@@ -94,11 +94,11 @@ namespace Modio.Core.Board
 
         void OnReceiveModuleRequest(object sender, RequestEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("{0} {1} {2}", e.From, e.To, e.Data);
-            var toModule = _container.Get(e.To);
+            System.Diagnostics.Debug.WriteLine("{0} {1} {2}", e.Sender, e.From, e.Data);
             var fromModule = _container.Get(e.From);
+            var senderModule = _container.Get(e.Sender);
             var toInvoke = ResolveRequestMethod(e, "OnRequest");
-            toInvoke?.Invoke(toModule, new object[] { fromModule, e.Data });
+            toInvoke?.Invoke(fromModule, new object[] { senderModule, e });
         }
 
 
@@ -120,13 +120,12 @@ namespace Modio.Core.Board
 
         MethodInfo ResolveRequestMethod(RequestEventArgs e, string methodName)
         {
-            var dataType = e.Data.GetType().FullName;
-            var methods = e.To.GetMethods();
+            var dataType = e.Data.FullName;
+            var methods = e.From.GetMethods();
             var toInvoke =
                 methods
                 .FirstOrDefault(method =>
-                    method.Name.Equals(methodName) &&
-                    method.GetParameters().FirstOrDefault(param => param.ParameterType.FullName == dataType) != null);
+                    method.Name.Equals(methodName));
             return toInvoke;
         }
 

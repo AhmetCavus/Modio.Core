@@ -27,7 +27,7 @@ namespace Modio.Core.Test
             appService.AddBoard<TestBoardService2>();
             appService.AddBoard<TestBoardService3>();
 
-            var boardService = appService.GetBoard<TestBoardService2>();
+            var boardService = appService.GetBoard<TestBoardService>();
             boardService.AddModule<TestModuleService>();
             boardService.AddModule<TestModuleService2>();
             boardService.AddModule<TestModuleService3>();
@@ -38,7 +38,7 @@ namespace Modio.Core.Test
                 module?.Messenger.SendMessage<TestModuleService2, double>(14.53);
                 module?.Messenger.SendMessage<TestModuleService3, int>(85);
                 module?.Messenger.SendMessage<TestModuleService2, EventArgs>(EventArgs.Empty);
-                module?.Messenger.RequestMessage<TestModuleService2, EventArgs>();
+                module?.Messenger.RequestMessage<TestModuleService3, EventArgs>();
             }
         }
     }
@@ -84,7 +84,12 @@ namespace Modio.Core.Test
             System.Diagnostics.Debug.WriteLine(param);
         }
 
-        public void OnRequest(object sender, MessageEventArgs e) {
+        public void OnMessage(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(e);
+        }
+
+        public void OnRequest(object sender, RequestEventArgs e) {
             if (!e.Data.ToString().Equals("test")) return;
         }
     }
@@ -96,22 +101,24 @@ namespace Modio.Core.Test
             System.Diagnostics.Debug.WriteLine(param);
         }
 
-        public void OnRequest(object sender, MessageEventArgs e)
+        public void OnRequest(object sender, RequestEventArgs e)
         {
-            if (!e.Data.ToString().Equals("test")) return;
+            if (e.Data != typeof(EventArgs)) return;
+            Messenger.SendMessage(e.From, EventArgs.Empty);
         }
     }
 
     class TestModuleService3 : BaseModuleService
     {
-        public void OnMessage(object sender, double param)
+        public void OnMessage(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(param);
+            System.Diagnostics.Debug.WriteLine(e);
         }
 
-        public void OnRequest(object sender, MessageEventArgs e)
+        public void OnRequest(object sender, RequestEventArgs e)
         {
-            if (!e.Data.ToString().Equals("test")) return;
+            if (e.Data != typeof(EventArgs)) return;
+            Messenger.SendMessage(e.Sender, EventArgs.Empty);
         }
     }
 
