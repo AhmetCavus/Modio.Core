@@ -1,10 +1,7 @@
 ﻿using Modio.Core.Container;
 using Modio.Core.Messenger;
 using Modio.Core.Module;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace Modio.Core.Board
 {
@@ -12,8 +9,8 @@ namespace Modio.Core.Board
     {
         #region Attributes
 
-        IServiceContainer<IModuleService> _container;
-        public IServiceContainer<IModuleService> Container {
+        ModuleContainer<UIModuleService> _container = new ModuleContainer<UIModuleService>();
+        public ModuleContainer<UIModuleService> Container {
             set
             {
                 _container = value;
@@ -27,7 +24,9 @@ namespace Modio.Core.Board
         string _id;
         public string Id => _id;
 
-        public IReadOnlyList<IModuleService> Modules => _container.ToList();
+        public IReadOnlyList<UIModuleService> Modules => _container.ToList();
+
+        public string Name => throw new System.NotImplementedException();
 
         #endregion
 
@@ -42,7 +41,7 @@ namespace Modio.Core.Board
 
         #region Public Methods
 
-        public void AddModule<TModuleService>() where TModuleService : class, IModuleService
+        public void AddModule<TModuleService>() where TModuleService : UIModuleService
         {
             var module = _container.Add<TModuleService>();
             module.Messenger.Broadcast -= OnReceiveModuleMessage;
@@ -51,29 +50,29 @@ namespace Modio.Core.Board
             module.Messenger.Request += OnReceiveModuleRequest;
         }
 
-        public TModuleService GetModule<TModuleService>() where TModuleService : class, IModuleService
+        public TModuleService GetModule<TModuleService>() where TModuleService : UIModuleService
         {
             return _container.Get<TModuleService>();
         }
 
-        public bool IsModuleActive<TModuleService>() where TModuleService : class, IModuleService
+        public bool IsModuleActive<TModuleService>() where TModuleService : UIModuleService
         {
             var module = GetModule<TModuleService>();
             return module.IsActive;
         }
 
-        public void RemoveModule<TModuleService>() where TModuleService : class, IModuleService
+        public void RemoveModule<TModuleService>() where TModuleService : UIModuleService
         {
             _container.Remove<TModuleService>();
         }
 
-        public void StartModule<TModuleService>() where TModuleService : class, IModuleService
+        public void StartModule<TModuleService>() where TModuleService : UIModuleService
         {
             var module = GetModule<TModuleService>();
             module.Activate();
         }
 
-        public void StopModule<TModuleService>() where TModuleService : class, IModuleService
+        public void StopModule<TModuleService>() where TModuleService : UIModuleService
         {
             var module = GetModule<TModuleService>();
             module.Deactivate();
@@ -85,10 +84,10 @@ namespace Modio.Core.Board
 
         void OnReceiveModuleMessage(object sender, MessageEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("{0} {1} {2}", e.From, e.To, e.Data);
+            System.Diagnostics.Debug.WriteLine("{0} {1} {2}", e.Sender, e.To, e.Data);
             var toModule = _container.Get(e.To);
-            var fromModule = _container.Get(e.From);
-            var toInvoke = ResolveMessageMethod(e, "OnMessage");
+            var fromModule = _container.Get(e.Sender);
+            var toInvoke = BaseMessenger<IModuleService>.ResolveMessageMethod(e, "OnMessage");
             toInvoke?.Invoke(toModule, new object [] { fromModule, e.Data });
         }
 
@@ -97,7 +96,7 @@ namespace Modio.Core.Board
             System.Diagnostics.Debug.WriteLine("{0} {1} {2}", e.Sender, e.From, e.Data);
             var fromModule = _container.Get(e.From);
             var senderModule = _container.Get(e.Sender);
-            var toInvoke = ResolveRequestMethod(e, "OnRequest");
+            var toInvoke = BaseMessenger<IModuleService>.ResolveRequestMethod(e, "OnRequest");
             toInvoke?.Invoke(fromModule, new object[] { senderModule, e });
         }
 
@@ -105,29 +104,6 @@ namespace Modio.Core.Board
         #endregion
 
         #region Helper Methods
-
-        MethodInfo ResolveMessageMethod(MessageEventArgs e, string methodName)
-        {
-            var dataType = e.Data.GetType().FullName;
-            var methods = e.To.GetMethods();
-            var toInvoke =
-                methods
-                .FirstOrDefault(method =>
-                    method.Name.Equals(methodName) &&
-                    method.GetParameters().FirstOrDefault(param => param.ParameterType.FullName == dataType) != null);
-            return toInvoke;
-        }
-
-        MethodInfo ResolveRequestMethod(RequestEventArgs e, string methodName)
-        {
-            var dataType = e.Data.FullName;
-            var methods = e.From.GetMethods();
-            var toInvoke =
-                methods
-                .FirstOrDefault(method =>
-                    method.Name.Equals(methodName));
-            return toInvoke;
-        }
 
         #endregion
 

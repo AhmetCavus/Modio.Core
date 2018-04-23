@@ -1,17 +1,19 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Modio.Core.Messenger
 {
     public class MessageEventArgs : EventArgs
     {
-        public Type To { get; }
-        public Type From { get; }
+        public Type Sender { get; }
         public object Data { get; }
+        public Type To { get; }
+        public MethodInfo ToInvoke { get; set; }
 
-        public MessageEventArgs(Type from, Type to, object param)
+        public MessageEventArgs(Type sender, Type to, object param)
         {
             To = to;
-            From = from;
+            Sender = sender;
             Data = param;
         }
     }

@@ -5,8 +5,11 @@ namespace Modio.Core.Module
 {
     public abstract class BaseModuleService : IModuleService
     {
-        public bool IsActive { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public IModuleMeta MetaInfo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public abstract bool IsUI { get; }
+        public abstract string Name { get; }
+        public abstract bool IsWorker { get; }
+        public abstract bool IsActive { get; }
+        public abstract IModuleMeta MetaInfo { get; }
 
         string _id;
         public string Id => _id;

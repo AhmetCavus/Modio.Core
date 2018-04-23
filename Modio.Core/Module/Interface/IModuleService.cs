@@ -6,7 +6,10 @@ namespace Modio.Core.Module
 {
     public interface IModuleService : IService, IDisposable
     {
+        bool IsUI { get; }
         bool IsActive { get; }
+        bool IsWorker { get; }
+
         IModuleMeta MetaInfo { get; }
         IMessenger<IModuleService> Messenger { get; }
 

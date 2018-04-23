@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
+using System.Linq;
 using Modio.Core.Board;
 using Modio.Core.Container;
+using Modio.Core.Module;
 
 namespace Modio.Core.App
 {
@@ -9,7 +12,8 @@ namespace Modio.Core.App
 
         #region Attributes
 
-        IServiceContainer<IBoardService> _container;
+        IServiceContainer<IBoardService> _boardContainer;
+        ModuleContainer<WorkerModuleService> _workerContainer;
 
         #endregion
 
@@ -18,7 +22,14 @@ namespace Modio.Core.App
         string _id;
         public string Id => _id;
 
-        public IReadOnlyList<IBoardService> Boards => _container.ToList();
+        string _name;
+        public string Name => _name;
+
+        public IReadOnlyList<IBoardService> Boards => _boardContainer.ToList();
+
+        public IReadOnlyList<WorkerModuleService> Workers => _workerContainer.ToList();
+
+        public IReadOnlyList<UIModuleService> Modules => throw new System.NotImplementedException();
 
         #endregion
 
@@ -26,7 +37,7 @@ namespace Modio.Core.App
 
         public BaseAppService(IServiceContainer<IBoardService> container)
         {
-            _container = container;
+            _boardContainer = container;
             _id = GetType().FullName;
         }
 
@@ -36,18 +47,17 @@ namespace Modio.Core.App
 
         public void AddBoard<TBoardService>() where TBoardService : class, IBoardService
         {
-            OnAddBoard(_container.Add<TBoardService>());
+            OnAddBoard(_boardContainer.Add<TBoardService>());
         }
 
         public TBoardService GetBoard<TBoardService>() where TBoardService : class, IBoardService
         {
-            return _container.Get<TBoardService>();
+            return _boardContainer.Get<TBoardService>();
         }
 
         public void RemoveBoard<TBoardService>() where TBoardService : class, IBoardService
         {
-            var board = _container.Remove<TBoardService>();
-            OnRemoveBoard(board);
+            OnRemoveBoard(_boardContainer.Remove<TBoardService>());
         }
 
         public void SelectBoard<TBoardService>() where TBoardService : class, IBoardService
@@ -55,6 +65,64 @@ namespace Modio.Core.App
             var board = GetBoard<TBoardService>();
             if (board == null) return;
             OnSelectBoard(board);
+        }
+
+        public void AddWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
+        {
+            OnAddWorker(_workerContainer.Add<TWorkerModule>());
+        }
+
+        public void RemoveWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
+        {
+            OnRemoveWorker(_workerContainer.Remove<TWorkerModule>());
+        }
+
+        public TWorkerModule GetWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
+        {
+            return _workerContainer.Get<TWorkerModule>();
+        }
+
+        public void ActivateModule<TBoardService, TModuleService>()
+            where TBoardService : class, IBoardService
+            where TModuleService : UIModuleService
+        {
+            var board = GetBoard<TBoardService>();
+            board.StartModule<TModuleService>();
+        }
+
+        public void AddModule<TBoardService, TModuleService>()
+            where TBoardService : class, IBoardService
+            where TModuleService : UIModuleService
+        {
+            var board = GetBoard<TBoardService>();
+            board.AddModule<TModuleService>();
+        }
+
+        public void RemoveModule<TBoardService, TModuleService>()
+            where TBoardService : class, IBoardService
+            where TModuleService : UIModuleService
+        {
+            var board = GetBoard<TBoardService>();
+            board.RemoveModule<TModuleService>();
+        }
+
+        public TModuleService GetModule<TBoardService, TModuleService>()
+            where TBoardService : class, IBoardService
+            where TModuleService : UIModuleService
+        {
+            var board = GetBoard<TBoardService>();
+            return board.GetModule<TModuleService>();
+        }
+
+        public IReadOnlyList<TModuleService> GetModules<TModuleService>() where TModuleService : UIModuleService
+        {
+            List<TModuleService> result = new List<TModuleService>();
+            var modules = Boards.SelectMany(board => board.Modules.Where(module => module.GetType() == typeof(TModuleService)));
+            foreach (var module in modules)
+            {
+                result.Add(module as TModuleService);
+            }
+            return result;
         }
 
         #endregion
@@ -74,12 +142,12 @@ namespace Modio.Core.App
                 if (disposing)
                 {
                     // TODO: verwalteten Zustand (verwaltete Objekte) entsorgen.
-                    _container.Dispose();
+                    _boardContainer.Dispose();
                 }
 
                 // TODO: nicht verwaltete Ressourcen (nicht verwaltete Objekte) freigeben und Finalizer weiter unten überschreiben.
                 // TODO: große Felder auf Null setzen.
-                _container = null;
+                _boardContainer = null;
                 disposedValue = true;
             }
         }
@@ -106,6 +174,16 @@ namespace Modio.Core.App
         protected abstract void OnRemoveBoard(IBoardService board);
         protected abstract void OnSelectBoard(IBoardService board);
         protected abstract void OnAddBoard(IBoardService board);
+
+        protected abstract void OnRemoveModule(UIModuleService module);
+        protected abstract void OnActivateModule(UIModuleService module);
+        protected abstract void OnAddModule(UIModuleService module);
+
+        protected abstract void OnRemoveWorker(WorkerModuleService worker);
+        protected abstract void OnAddWorker(WorkerModuleService worker);
+
+        protected abstract void OnRemoveComponent(WorkerModuleService worker);
+        protected abstract void OnAddComponent(WorkerModuleService worker);
 
         #endregion
 

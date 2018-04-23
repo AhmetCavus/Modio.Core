@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using Modio.Core.Service;
 
 namespace Modio.Core.Messenger
@@ -17,7 +19,10 @@ namespace Modio.Core.Messenger
 
         public void SendMessage(Type to, object param)
         {
-            OnSendMessage(this, new MessageEventArgs(_sender, to, param));
+            var e = new MessageEventArgs(_sender, to, param);
+            var method = ResolveMessageMethod(e, "OnMessage");
+            e.ToInvoke = method;
+            OnSendMessage(this, e);
         }
 
         public void SendMessage<TSubService, TParam>(TParam param) where TSubService : TService
@@ -25,9 +30,9 @@ namespace Modio.Core.Messenger
             OnSendMessage(this, new MessageEventArgs(_sender, typeof(TSubService), param));
         }
 
-        public void RequestMessage(Type to, Type param)
+        public void RequestMessage(Type from, Type param)
         {
-            OnRequestMessage(this, new RequestEventArgs(_sender, to, param));
+            OnRequestMessage(this, new RequestEventArgs(_sender, from, param));
         }
 
         public void RequestMessage<TSubService, TParam>() where TSubService : TService
@@ -44,5 +49,31 @@ namespace Modio.Core.Messenger
         {
             Request?.Invoke(sender, e);
         }
+
+        #region Helper Methods
+
+        public static MethodInfo ResolveMessageMethod(MessageEventArgs e, string methodName)
+        {
+            var methods = e.To.GetMethods();
+            var toInvoke =
+                methods
+                .FirstOrDefault(method =>
+                    method.Name.Equals(methodName) &&
+                    method.GetParameters().FirstOrDefault(param => param.ParameterType.FullName == e.Data.GetType().FullName) != null);
+            return toInvoke;
+        }
+
+        public static MethodInfo ResolveRequestMethod(RequestEventArgs e, string methodName)
+        {
+            var dataType = e.Data.FullName;
+            var methods = e.From.GetMethods();
+            var toInvoke =
+                methods
+                .FirstOrDefault(method =>
+                    method.Name.Equals(methodName));
+            return toInvoke;
+        }
+
+        #endregion
     }
 }

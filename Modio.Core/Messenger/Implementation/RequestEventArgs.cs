@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Modio.Core.Messenger
 {
@@ -7,6 +8,7 @@ namespace Modio.Core.Messenger
         public Type From { get; }
         public Type Sender { get; }
         public Type Data { get; }
+        public MethodInfo ToInvoke { get; set; }
 
         public RequestEventArgs(Type sender, Type from, Type param)
         {
