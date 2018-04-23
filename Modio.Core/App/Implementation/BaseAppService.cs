@@ -54,7 +54,7 @@ namespace Modio.Core.App
 
         public TBoardService GetBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
         {
-            return _boardContainer.Get<TBoardService>();
+            return _boardContainer.Get<TSubBoardService>();
         }
 
         public void RemoveBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
@@ -112,8 +112,8 @@ namespace Modio.Core.App
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService
         {
-            var board = GetBoard<TBoardService>();
-            return board.GetModule<TModuleService>();
+            var board = GetBoard<TSubBoardService>();
+            return board.GetModule<TSubModuleService>();
         }
 
         public IReadOnlyList<TSubModuleService> GetModules<TSubModuleService>() where TSubModuleService : class, TModuleService

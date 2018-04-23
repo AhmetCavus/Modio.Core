@@ -9,7 +9,7 @@ namespace Modio.Core.Board
     public interface IBoardService<TModuleService> : IService, IDisposable where TModuleService : class, IModuleService
     {
         IReadOnlyList<TModuleService> Modules { get; }
-        IServiceContainer<TModuleService> Container { set; }
+        IServiceContainer<TModuleService> Container { get; }
         void StartModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
         void StopModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
         void AddModule<TSubModuleService>() where TSubModuleService : class, TModuleService;

@@ -15,15 +15,16 @@ namespace Modio.Core.Board
         public override IReadOnlyList<UIModuleService> Modules => throw new System.NotImplementedException();
 
         IServiceContainer<UIModuleService> _container;
-        public override IServiceContainer<UIModuleService> Container
-        {
-            get => _container;
-            set => _container = value;
-        }
+        public override IServiceContainer<UIModuleService> Container => _container;
 
         #endregion
 
         #region Constructor
+
+        public UIBoardService()
+        {
+            _container = new ModuleContainer<UIModuleService>();
+        }
 
         #endregion
 

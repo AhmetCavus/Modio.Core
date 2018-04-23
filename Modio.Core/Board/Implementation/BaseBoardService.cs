@@ -9,7 +9,6 @@ namespace Modio.Core.Board
     {
         #region Attributes
 
-
         #endregion
 
         #region Properties
@@ -21,7 +20,7 @@ namespace Modio.Core.Board
 
         public abstract IReadOnlyList<TModuleService> Modules { get; }
 
-        public abstract IServiceContainer<TModuleService> Container { get; set; }
+        public abstract IServiceContainer<TModuleService> Container { get; }
 
         #endregion
 
@@ -38,7 +37,7 @@ namespace Modio.Core.Board
 
         public void AddModule<TSubModuleService>() where TSubModuleService : class, TModuleService
         {
-            var module = Container.Add<TModuleService>();
+            var module = Container.Add<TSubModuleService>();
             module.Messenger.Broadcast -= OnReceiveModuleMessage;
             module.Messenger.Broadcast += OnReceiveModuleMessage;
             module.Messenger.Request -= OnReceiveModuleRequest;
