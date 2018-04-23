@@ -6,14 +6,15 @@ using System.Collections.Generic;
 
 namespace Modio.Core.Board
 {
-    public interface IBoardService : IService, IDisposable
+    public interface IBoardService<TModuleService> : IService, IDisposable where TModuleService : class, IModuleService
     {
-        IReadOnlyList<UIModuleService> Modules { get; }
-        void StartModule<TModuleService>() where TModuleService : UIModuleService;
-        void StopModule<TModuleService>() where TModuleService : UIModuleService;
-        void AddModule<TModuleService>() where TModuleService : UIModuleService;
-        void RemoveModule<TModuleService>() where TModuleService : UIModuleService;
-        bool IsModuleActive<TModuleService>() where TModuleService : UIModuleService;
-        TModuleService GetModule<TModuleService>() where TModuleService : UIModuleService;
+        IReadOnlyList<TModuleService> Modules { get; }
+        IServiceContainer<TModuleService> Container { set; }
+        void StartModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        void StopModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        void AddModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        void RemoveModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        bool IsModuleActive<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        TModuleService GetModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
     }
 }

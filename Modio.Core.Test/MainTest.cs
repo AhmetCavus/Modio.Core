@@ -23,7 +23,7 @@ namespace Modio.Core.Test
         [Fact]
         public void StartTest()
         {
-            IAppService appService = new TestAppService(new ServiceDictionaryContainer<IBoardService>());
+            IAppService<UIBoardService, UIModuleService> appService = new TestAppService(new ServiceDictionaryContainer<UIBoardService>());
             appService.AddBoard<TestBoardService>();
             appService.AddBoard<TestBoardService2>();
             appService.AddBoard<TestBoardService3>();
@@ -41,63 +41,23 @@ namespace Modio.Core.Test
         }
     }
 
-    class TestAppService : BaseAppService
+    class TestAppService : UIAppService
     {
-        public TestAppService(IServiceContainer<IBoardService> container) : base(container)
-        {
-        }
-
-        protected override void OnActivateModule(UIModuleService module)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnAddBoard(IBoardService board)
-        {
-        }
-
-        protected override void OnAddComponent(WorkerModuleService worker)
-        {
-        }
-
-        protected override void OnAddModule(UIModuleService module)
-        {
-        }
-
-        protected override void OnAddWorker(WorkerModuleService worker)
-        {
-        }
-
-        protected override void OnRemoveBoard(IBoardService board)
-        {
-        }
-
-        protected override void OnRemoveComponent(WorkerModuleService worker)
-        {
-        }
-
-        protected override void OnRemoveModule(UIModuleService module)
-        {
-        }
-
-        protected override void OnRemoveWorker(WorkerModuleService worker)
-        {
-        }
-
-        protected override void OnSelectBoard(IBoardService board)
+        public TestAppService(IServiceContainer<UIBoardService> container) : base(container)
         {
         }
     }
 
-    class TestBoardService : BaseBoardService
+
+    class TestBoardService : UIBoardService
     {
     }
 
-    class TestBoardService2 : BaseBoardService
+    class TestBoardService2 : UIBoardService
     {
     }
 
-    class TestBoardService3 : BaseBoardService
+    class TestBoardService3 : UIBoardService
     {
     }
 

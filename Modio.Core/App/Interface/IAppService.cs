@@ -1,5 +1,4 @@
 ﻿using Modio.Core.Board;
-using Modio.Core.Container;
 using Modio.Core.Module;
 using Modio.Core.Service;
 using System;
@@ -7,21 +6,23 @@ using System.Collections.Generic;
 
 namespace Modio.Core.App
 {
-    public interface IAppService : IService, IDisposable
+    public interface IAppService<TBoardService, TModuleService> : IService, IDisposable 
+        where TBoardService : class, IBoardService<TModuleService>
+        where TModuleService : class, IModuleService
     {
-        IReadOnlyList<IBoardService> Boards { get; }
+        IReadOnlyList<TBoardService> Boards { get; }
 
         IReadOnlyList<WorkerModuleService> Workers { get; }
 
-        IReadOnlyList<UIModuleService> Modules { get; }
+        IReadOnlyList<TModuleService> Modules { get; }
 
-        void SelectBoard<TBoardService>() where TBoardService : class, IBoardService;
+        void SelectBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
-        void AddBoard<TBoardService>() where TBoardService : class, IBoardService;
+        void AddBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
-        void RemoveBoard<TBoardService>() where TBoardService : class, IBoardService;
+        void RemoveBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
-        TBoardService GetBoard<TBoardService>() where TBoardService : class, IBoardService;
+        TBoardService GetBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
         void AddWorker<TWorkerModule>()
             where TWorkerModule : WorkerModuleService;
@@ -32,24 +33,24 @@ namespace Modio.Core.App
         TWorkerModule GetWorker<TWorkerModule>()
             where TWorkerModule : WorkerModuleService;
 
-        void ActivateModule<TBoardService, TModuleService>()
-            where TBoardService : class, IBoardService
-            where TModuleService : UIModuleService;
+        void ActivateModule<TSubBoardService, TSubModuleService>()
+            where TSubBoardService : class, TBoardService
+            where TSubModuleService : class, TModuleService;
 
-        void AddModule<TBoardService, TModuleService>() 
-            where TBoardService : class, IBoardService
-            where TModuleService: UIModuleService;
+        void AddModule<TSubBoardService, TSubModuleService>()
+            where TSubBoardService : class, TBoardService
+            where TSubModuleService : class, TModuleService;
 
-        void RemoveModule<TBoardService, TModuleService>()
-            where TBoardService : class, IBoardService
-            where TModuleService : UIModuleService;
+        void RemoveModule<TSubBoardService, TSubModuleService>()
+            where TSubBoardService : class, TBoardService
+            where TSubModuleService : class, TModuleService;
 
-        TModuleService GetModule<TBoardService, TModuleService>() 
-            where TBoardService : class, IBoardService
-            where TModuleService : UIModuleService;
+        TModuleService GetModule<TSubBoardService, TSubModuleService>()
+            where TSubBoardService : class, TBoardService
+            where TSubModuleService : class, TModuleService;
 
-        IReadOnlyList<TModuleService> GetModules<TModuleService>()
-            where TModuleService : UIModuleService;
+        IReadOnlyList<TSubModuleService> GetModules<TSubModuleService>()
+            where TSubModuleService : class, TModuleService;
 
     }
 }

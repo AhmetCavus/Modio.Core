@@ -7,12 +7,14 @@ using Modio.Core.Module;
 
 namespace Modio.Core.App
 {
-    public abstract class BaseAppService : IAppService
+    public abstract class BaseAppService<TBoardService, TModuleService> : IAppService<TBoardService, TModuleService> 
+        where TBoardService : class, IBoardService<TModuleService>
+        where TModuleService : class, IModuleService
     {
 
         #region Attributes
 
-        IServiceContainer<IBoardService> _boardContainer;
+        IServiceContainer<TBoardService> _boardContainer;
         ModuleContainer<WorkerModuleService> _workerContainer;
 
         #endregion
@@ -25,17 +27,17 @@ namespace Modio.Core.App
         string _name;
         public string Name => _name;
 
-        public IReadOnlyList<IBoardService> Boards => _boardContainer.ToList();
+        public IReadOnlyList<TBoardService> Boards => _boardContainer.ToList();
 
         public IReadOnlyList<WorkerModuleService> Workers => _workerContainer.ToList();
 
-        public IReadOnlyList<UIModuleService> Modules => throw new System.NotImplementedException();
+        public IReadOnlyList<TModuleService> Modules => throw new System.NotImplementedException();
 
         #endregion
 
         #region Constructor
 
-        public BaseAppService(IServiceContainer<IBoardService> container)
+        public BaseAppService(IServiceContainer<TBoardService> container)
         {
             _boardContainer = container;
             _id = GetType().FullName;
@@ -45,24 +47,24 @@ namespace Modio.Core.App
 
         #region Public Methods
 
-        public void AddBoard<TBoardService>() where TBoardService : class, IBoardService
+        public void AddBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
         {
-            OnAddBoard(_boardContainer.Add<TBoardService>());
+            OnAddBoard(_boardContainer.Add<TSubBoardService>());
         }
 
-        public TBoardService GetBoard<TBoardService>() where TBoardService : class, IBoardService
+        public TBoardService GetBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
         {
             return _boardContainer.Get<TBoardService>();
         }
 
-        public void RemoveBoard<TBoardService>() where TBoardService : class, IBoardService
+        public void RemoveBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
         {
-            OnRemoveBoard(_boardContainer.Remove<TBoardService>());
+            OnRemoveBoard(_boardContainer.Remove<TSubBoardService>());
         }
 
-        public void SelectBoard<TBoardService>() where TBoardService : class, IBoardService
+        public void SelectBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
         {
-            var board = GetBoard<TBoardService>();
+            var board = GetBoard<TSubBoardService>();
             if (board == null) return;
             OnSelectBoard(board);
         }
@@ -82,45 +84,45 @@ namespace Modio.Core.App
             return _workerContainer.Get<TWorkerModule>();
         }
 
-        public void ActivateModule<TBoardService, TModuleService>()
-            where TBoardService : class, IBoardService
-            where TModuleService : UIModuleService
+        public void ActivateModule<TSubBoardService, TSubModuleService>()
+            where TSubBoardService : class, TBoardService
+            where TSubModuleService : class, TModuleService
         {
-            var board = GetBoard<TBoardService>();
-            board.StartModule<TModuleService>();
+            var board = GetBoard<TSubBoardService>();
+            board.StartModule<TSubModuleService>();
         }
 
-        public void AddModule<TBoardService, TModuleService>()
-            where TBoardService : class, IBoardService
-            where TModuleService : UIModuleService
+        public void AddModule<TSubBoardService, TSubModuleService>()
+            where TSubBoardService : class, TBoardService
+            where TSubModuleService : class, TModuleService
         {
-            var board = GetBoard<TBoardService>();
-            board.AddModule<TModuleService>();
+            var board = GetBoard<TSubBoardService>();
+            board.AddModule<TSubModuleService>();
         }
 
-        public void RemoveModule<TBoardService, TModuleService>()
-            where TBoardService : class, IBoardService
-            where TModuleService : UIModuleService
+        public void RemoveModule<TSubBoardService, TSubModuleService>()
+            where TSubBoardService : class, TBoardService
+            where TSubModuleService : class, TModuleService
         {
             var board = GetBoard<TBoardService>();
             board.RemoveModule<TModuleService>();
         }
 
-        public TModuleService GetModule<TBoardService, TModuleService>()
-            where TBoardService : class, IBoardService
-            where TModuleService : UIModuleService
+        public TModuleService GetModule<TSubBoardService, TSubModuleService>()
+            where TSubBoardService : class, TBoardService
+            where TSubModuleService : class, TModuleService
         {
             var board = GetBoard<TBoardService>();
             return board.GetModule<TModuleService>();
         }
 
-        public IReadOnlyList<TModuleService> GetModules<TModuleService>() where TModuleService : UIModuleService
+        public IReadOnlyList<TSubModuleService> GetModules<TSubModuleService>() where TSubModuleService : class, TModuleService
         {
-            List<TModuleService> result = new List<TModuleService>();
-            var modules = Boards.SelectMany(board => board.Modules.Where(module => module.GetType() == typeof(TModuleService)));
+            List<TSubModuleService> result = new List<TSubModuleService>();
+            var modules = Boards.SelectMany(board => board.Modules.Where(module => module.GetType() == typeof(TSubModuleService)));
             foreach (var module in modules)
             {
-                result.Add(module as TModuleService);
+                result.Add(module as TSubModuleService);
             }
             return result;
         }
@@ -171,13 +173,13 @@ namespace Modio.Core.App
 
         #region Abstract Methods
 
-        protected abstract void OnRemoveBoard(IBoardService board);
-        protected abstract void OnSelectBoard(IBoardService board);
-        protected abstract void OnAddBoard(IBoardService board);
+        protected abstract void OnRemoveBoard(TBoardService board);
+        protected abstract void OnSelectBoard(TBoardService board);
+        protected abstract void OnAddBoard(TBoardService board);
 
-        protected abstract void OnRemoveModule(UIModuleService module);
-        protected abstract void OnActivateModule(UIModuleService module);
-        protected abstract void OnAddModule(UIModuleService module);
+        protected abstract void OnRemoveModule(TModuleService module);
+        protected abstract void OnActivateModule(TModuleService module);
+        protected abstract void OnAddModule(TModuleService module);
 
         protected abstract void OnRemoveWorker(WorkerModuleService worker);
         protected abstract void OnAddWorker(WorkerModuleService worker);
