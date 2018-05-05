@@ -1,6 +1,7 @@
 ﻿using Modio.Core.Container;
 using Modio.Core.Messenger;
 using Modio.Core.Module;
+using System;
 using System.Collections.Generic;
 
 namespace Modio.Core.Board
@@ -21,6 +22,8 @@ namespace Modio.Core.Board
         public abstract IReadOnlyList<TModuleService> Modules { get; }
 
         public abstract IServiceContainer<TModuleService> Container { get; }
+
+        public bool IsInitialized => String.IsNullOrEmpty(_id);
 
         #endregion
 

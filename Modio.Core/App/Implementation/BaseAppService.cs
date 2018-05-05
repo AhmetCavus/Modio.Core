@@ -27,11 +27,14 @@ namespace Modio.Core.App
         string _name;
         public string Name => _name;
 
+        public bool IsInitialized => Boards != null && Boards.Count > 0;
+
         public IReadOnlyList<TBoardService> Boards => _boardContainer.ToList();
 
         public IReadOnlyList<WorkerModuleService> Workers => _workerContainer.ToList();
 
         public IReadOnlyList<TModuleService> Modules => throw new System.NotImplementedException();
+
 
         #endregion
 
@@ -183,9 +186,6 @@ namespace Modio.Core.App
 
         protected abstract void OnRemoveWorker(WorkerModuleService worker);
         protected abstract void OnAddWorker(WorkerModuleService worker);
-
-        protected abstract void OnRemoveComponent(WorkerModuleService worker);
-        protected abstract void OnAddComponent(WorkerModuleService worker);
 
         #endregion
 

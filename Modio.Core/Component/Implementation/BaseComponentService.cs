@@ -9,6 +9,8 @@ namespace Modio.Core.Component
         public abstract string Id { get; }
         public abstract string Name { get; }
 
+        public bool IsInitialized => !String.IsNullOrEmpty(Id);
+
         public abstract void Initialize();
 
         #region IDisposable Support

@@ -6,6 +6,6 @@ namespace Modio.Core.Service
     {
         string Id { get; }
         string Name { get; }
-
+        bool IsInitialized { get; }
     }
 }
