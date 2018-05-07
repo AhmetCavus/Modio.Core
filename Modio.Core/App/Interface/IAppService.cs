@@ -16,36 +16,36 @@ namespace Modio.Core.App
 
         IReadOnlyList<TModuleService> Modules { get; }
 
-        void SelectBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
+        TSubBoardService SelectBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
-        void AddBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
+        TSubBoardService AddBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
-        void RemoveBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
+        TSubBoardService RemoveBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
-        TBoardService GetBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
+        TSubBoardService GetBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
-        void AddWorker<TWorkerModule>()
+        TWorkerModule AddWorker<TWorkerModule>()
             where TWorkerModule : WorkerModuleService;
 
-        void RemoveWorker<TWorkerModule>()
+        TWorkerModule RemoveWorker<TWorkerModule>()
             where TWorkerModule : WorkerModuleService;
 
         TWorkerModule GetWorker<TWorkerModule>()
             where TWorkerModule : WorkerModuleService;
 
-        void ActivateModule<TSubBoardService, TSubModuleService>()
+        TSubModuleService ActivateModule<TSubBoardService, TSubModuleService>()
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService;
 
-        void AddModule<TSubBoardService, TSubModuleService>()
+        TSubModuleService AddModule<TSubBoardService, TSubModuleService>()
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService;
 
-        void RemoveModule<TSubBoardService, TSubModuleService>()
+        TSubModuleService RemoveModule<TSubBoardService, TSubModuleService>()
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService;
 
-        TModuleService GetModule<TSubBoardService, TSubModuleService>()
+        TSubModuleService GetModule<TSubBoardService, TSubModuleService>()
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService;
 

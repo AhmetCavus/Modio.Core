@@ -10,11 +10,11 @@ namespace Modio.Core.Board
     {
         IReadOnlyList<TModuleService> Modules { get; }
         IServiceContainer<TModuleService> Container { get; }
-        void StartModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
-        void StopModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
-        void AddModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
-        void RemoveModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        TSubModuleService StartModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        TSubModuleService StopModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        TSubModuleService AddModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        TSubModuleService RemoveModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
         bool IsModuleActive<TSubModuleService>() where TSubModuleService : class, TModuleService;
-        TModuleService GetModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        TSubModuleService GetModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
     }
 }

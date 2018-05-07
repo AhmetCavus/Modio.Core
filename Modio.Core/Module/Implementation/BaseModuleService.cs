@@ -17,6 +17,8 @@ namespace Modio.Core.Module
         IMessenger<IModuleService> _messenger;
         public IMessenger<IModuleService> Messenger => _messenger;
 
+        public bool IsInitialized => throw new NotImplementedException();
+
         public BaseModuleService()
         {
             _id = GetType().FullName;

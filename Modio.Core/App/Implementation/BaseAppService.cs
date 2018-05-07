@@ -50,36 +50,46 @@ namespace Modio.Core.App
 
         #region Public Methods
 
-        public void AddBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
+        public TSubBoardService AddBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
         {
-            OnAddBoard(_boardContainer.Add<TSubBoardService>());
+            var board = _boardContainer.Add<TSubBoardService>();
+            OnAddBoard<TSubBoardService>(board);
+            return board;
         }
 
-        public TBoardService GetBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
+        public TSubBoardService GetBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
         {
             return _boardContainer.Get<TSubBoardService>();
         }
 
-        public void RemoveBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
-        {
-            OnRemoveBoard(_boardContainer.Remove<TSubBoardService>());
-        }
-
-        public void SelectBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
+        public TSubBoardService RemoveBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
         {
             var board = GetBoard<TSubBoardService>();
-            if (board == null) return;
-            OnSelectBoard(board);
+            OnRemoveBoard<TSubBoardService>(board);
+            _boardContainer.Remove<TSubBoardService>();
+            return board;
         }
 
-        public void AddWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
+        public TSubBoardService SelectBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
         {
-            OnAddWorker(_workerContainer.Add<TWorkerModule>());
+            var board = GetBoard<TSubBoardService>();
+            if (board == null) return default(TSubBoardService);
+            OnSelectBoard<TSubBoardService>(board);
+            return board;
         }
 
-        public void RemoveWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
+        public TWorkerModule AddWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
         {
-            OnRemoveWorker(_workerContainer.Remove<TWorkerModule>());
+            var worker = _workerContainer.Add<TWorkerModule>();
+            OnAddWorker<TWorkerModule>(worker);
+            return worker;
+        }
+
+        public TWorkerModule RemoveWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
+        {
+            var worker = _workerContainer.Remove<TWorkerModule>();
+            OnRemoveWorker<TWorkerModule>(worker);
+            return worker;
         }
 
         public TWorkerModule GetWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
@@ -87,31 +97,31 @@ namespace Modio.Core.App
             return _workerContainer.Get<TWorkerModule>();
         }
 
-        public void ActivateModule<TSubBoardService, TSubModuleService>()
+        public TSubModuleService ActivateModule<TSubBoardService, TSubModuleService>()
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService
         {
             var board = GetBoard<TSubBoardService>();
-            board.StartModule<TSubModuleService>();
+            return board.StartModule<TSubModuleService>();
         }
 
-        public void AddModule<TSubBoardService, TSubModuleService>()
+        public TSubModuleService AddModule<TSubBoardService, TSubModuleService>()
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService
         {
             var board = GetBoard<TSubBoardService>();
-            board.AddModule<TSubModuleService>();
+            return board.AddModule<TSubModuleService>();
         }
 
-        public void RemoveModule<TSubBoardService, TSubModuleService>()
+        public TSubModuleService RemoveModule<TSubBoardService, TSubModuleService>()
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService
         {
             var board = GetBoard<TBoardService>();
-            board.RemoveModule<TModuleService>();
+            return board.RemoveModule<TSubModuleService>();
         }
 
-        public TModuleService GetModule<TSubBoardService, TSubModuleService>()
+        public TSubModuleService GetModule<TSubBoardService, TSubModuleService>()
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService
         {
@@ -176,16 +186,16 @@ namespace Modio.Core.App
 
         #region Abstract Methods
 
-        protected abstract void OnRemoveBoard(TBoardService board);
-        protected abstract void OnSelectBoard(TBoardService board);
-        protected abstract void OnAddBoard(TBoardService board);
+        protected abstract void OnRemoveBoard<TSubBoardService>(TBoardService board) where TSubBoardService : TBoardService;
+        protected abstract void OnSelectBoard<TSubBoardService>(TBoardService board) where TSubBoardService : TBoardService;
+        protected abstract void OnAddBoard<TSubBoardService>(TBoardService board) where TSubBoardService : TBoardService;
 
-        protected abstract void OnRemoveModule(TModuleService module);
-        protected abstract void OnActivateModule(TModuleService module);
-        protected abstract void OnAddModule(TModuleService module);
+        protected abstract void OnRemoveModule<TSubBoardService>(TModuleService module) where TSubBoardService : TBoardService;
+        protected abstract void OnActivateModule<TSubBoardService>(TModuleService module) where TSubBoardService : TBoardService;
+        protected abstract void OnAddModule<TSubBoardService>(TModuleService module) where TSubBoardService : TBoardService;
 
-        protected abstract void OnRemoveWorker(WorkerModuleService worker);
-        protected abstract void OnAddWorker(WorkerModuleService worker);
+        protected abstract void OnRemoveWorker<TSubWorkerModuleService>(WorkerModuleService worker) where TSubWorkerModuleService : WorkerModuleService;
+        protected abstract void OnAddWorker<TSubWorkerModuleService>(WorkerModuleService worker) where TSubWorkerModuleService : WorkerModuleService;
 
         #endregion
 

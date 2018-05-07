@@ -6,6 +6,8 @@
         public string Id { get => _id; }
         public abstract string Name { get; }
 
+        public bool IsInitialized => throw new System.NotImplementedException();
+
         #region IDisposable Support
         private bool disposedValue = false; // Dient zur Erkennung redundanter Aufrufe.
 
