@@ -19,7 +19,7 @@ namespace Modio.Core.Board
 
         public string Name => GetType().FullName;
 
-        public abstract IReadOnlyList<TModuleService> Modules { get; }
+        public abstract IList<TModuleService> Modules { get; set; }
 
         public abstract IServiceContainer<TModuleService> Container { get; }
 
