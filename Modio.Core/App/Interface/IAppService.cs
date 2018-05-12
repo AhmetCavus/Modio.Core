@@ -18,13 +18,13 @@ namespace Modio.Core.App
 
         TSubBoardService SelectBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
-        TSubBoardService AddBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
+        void AddBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
         TSubBoardService RemoveBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
         TSubBoardService GetBoard<TSubBoardService>() where TSubBoardService : class, TBoardService;
 
-        TWorkerModule AddWorker<TWorkerModule>()
+        void AddWorker<TWorkerModule>()
             where TWorkerModule : WorkerModuleService;
 
         TWorkerModule RemoveWorker<TWorkerModule>()
@@ -37,7 +37,7 @@ namespace Modio.Core.App
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService;
 
-        TSubModuleService AddModule<TSubBoardService, TSubModuleService>()
+        void AddModule<TSubBoardService, TSubModuleService>()
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService;
 

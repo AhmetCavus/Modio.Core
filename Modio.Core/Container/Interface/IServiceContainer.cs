@@ -8,7 +8,7 @@ namespace Modio.Core.Container
     {
         IReadOnlyList<TService> ToList();
         bool Contains<TSubService>() where TSubService : class, TService;
-        TSubService Add<TSubService>() where TSubService : class, TService;
+        void Add<TSubService>() where TSubService : class, TService;
         TSubService Get<TSubService>() where TSubService : class, TService;
         TService Get(Type serviceType);
         TSubService Remove<TSubService>() where TSubService : class, TService;

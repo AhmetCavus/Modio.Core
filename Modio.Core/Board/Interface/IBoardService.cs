@@ -12,7 +12,7 @@ namespace Modio.Core.Board
         IServiceContainer<TModuleService> Container { get; }
         TSubModuleService StartModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
         TSubModuleService StopModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
-        TSubModuleService AddModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
+        void AddModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
         TSubModuleService RemoveModule<TSubModuleService>() where TSubModuleService : class, TModuleService;
         bool IsModuleActive<TSubModuleService>() where TSubModuleService : class, TModuleService;
         TSubModuleService GetModule<TSubModuleService>() where TSubModuleService : class, TModuleService;

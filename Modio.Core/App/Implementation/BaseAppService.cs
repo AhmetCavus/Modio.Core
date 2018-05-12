@@ -50,11 +50,11 @@ namespace Modio.Core.App
 
         #region Public Methods
 
-        public TSubBoardService AddBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
+        public void AddBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
         {
-            var board = _boardContainer.Add<TSubBoardService>();
+            _boardContainer.Add<TSubBoardService>();
+            var board = GetBoard<TSubBoardService>();
             OnAddBoard<TSubBoardService>(board);
-            return board;
         }
 
         public TSubBoardService GetBoard<TSubBoardService>() where TSubBoardService : class, TBoardService
@@ -78,11 +78,11 @@ namespace Modio.Core.App
             return board;
         }
 
-        public TWorkerModule AddWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
+        public void AddWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
         {
-            var worker = _workerContainer.Add<TWorkerModule>();
+            _workerContainer.Add<TWorkerModule>();
+            var worker = GetWorker<TWorkerModule>();
             OnAddWorker<TWorkerModule>(worker);
-            return worker;
         }
 
         public TWorkerModule RemoveWorker<TWorkerModule>() where TWorkerModule : WorkerModuleService
@@ -105,12 +105,12 @@ namespace Modio.Core.App
             return board.StartModule<TSubModuleService>();
         }
 
-        public TSubModuleService AddModule<TSubBoardService, TSubModuleService>()
+        public void AddModule<TSubBoardService, TSubModuleService>()
             where TSubBoardService : class, TBoardService
             where TSubModuleService : class, TModuleService
         {
             var board = GetBoard<TSubBoardService>();
-            return board.AddModule<TSubModuleService>();
+            board.AddModule<TSubModuleService>();
         }
 
         public TSubModuleService RemoveModule<TSubBoardService, TSubModuleService>()

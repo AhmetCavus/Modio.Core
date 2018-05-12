@@ -16,12 +16,11 @@ namespace Modio.Core.Container
 
         #region Public Methods
 
-        public override TSubService Add<TSubService>()
+        public override void Add<TSubService>()
         {
             var type = typeof(TSubService);
             var instance = Activator.CreateInstance<TSubService>();
             _serviceDict.Add(type.FullName, instance);
-            return instance;
         }
 
         public override bool Contains<TSubService>()

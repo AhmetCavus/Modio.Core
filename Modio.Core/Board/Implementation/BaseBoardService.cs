@@ -40,14 +40,16 @@ namespace Modio.Core.Board
 
         public void AddModule<TSubModuleService>() where TSubModuleService : class, TModuleService
         {
-            var module = Container.Add<TSubModuleService>();
+            Container.Add<TSubModuleService>();
+            var module = GetModule<TSubModuleService>();
             module.Messenger.Broadcast -= OnReceiveModuleMessage;
             module.Messenger.Broadcast += OnReceiveModuleMessage;
             module.Messenger.Request -= OnReceiveModuleRequest;
             module.Messenger.Request += OnReceiveModuleRequest;
+            OnAddModule(module);
         }
 
-        public TModuleService GetModule<TSubModuleService>() where TSubModuleService : class, TModuleService
+        public TSubModuleService GetModule<TSubModuleService>() where TSubModuleService : class, TModuleService
         {
             return Container.Get<TSubModuleService>();
         }
@@ -58,21 +60,25 @@ namespace Modio.Core.Board
             return module.IsActive;
         }
 
-        public void RemoveModule<TSubModuleService>() where TSubModuleService : class, TModuleService
+        public TSubModuleService RemoveModule<TSubModuleService>() where TSubModuleService : class, TModuleService
         {
-            Container.Remove<TSubModuleService>();
+            var module = Container.Remove<TSubModuleService>();
+            OnRemoveModule(module);
+            return module;
         }
 
-        public void StartModule<TSubModuleService>() where TSubModuleService : class, TModuleService
+        public TSubModuleService StartModule<TSubModuleService>() where TSubModuleService : class, TModuleService
         {
             var module = GetModule<TSubModuleService>();
             module.Activate();
+            return module;
         }
 
-        public void StopModule<TSubModuleService>() where TSubModuleService : class, TModuleService
+        public TSubModuleService StopModule<TSubModuleService>() where TSubModuleService : class, TModuleService
         {
             var module = GetModule<TSubModuleService>();
             module.Deactivate();
+            return module;
         }
 
         #endregion
@@ -138,6 +144,14 @@ namespace Modio.Core.Board
             // TODO: Auskommentierung der folgenden Zeile aufheben, wenn der Finalizer weiter oben überschrieben wird.
             // GC.SuppressFinalize(this);
         }
+
+        #endregion
+
+        #region Abstract Methods
+
+        protected abstract void OnRemoveModule(TModuleService module);
+        protected abstract void OnActivateModule(TModuleService module);
+        protected abstract void OnAddModule(TModuleService module);
 
         #endregion
     }

@@ -46,6 +46,46 @@ namespace Modio.Core.Test
         public TestAppService(IServiceContainer<UIBoardService> container) : base(container)
         {
         }
+
+        protected override void OnActivateModule<TSubBoardService>(UIModuleService module)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnAddBoard<TSubBoardService>(UIBoardService board)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnAddModule<TSubBoardService>(UIModuleService module)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnAddWorker<TSubWorkerModuleService>(WorkerModuleService worker)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnRemoveBoard<TSubBoardService>(UIBoardService board)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnRemoveModule<TSubBoardService>(UIModuleService module)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnRemoveWorker<TSubWorkerModuleService>(WorkerModuleService worker)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnSelectBoard<TSubBoardService>(UIBoardService board)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

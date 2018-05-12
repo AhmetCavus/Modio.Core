@@ -19,10 +19,9 @@ namespace Modio.Core.Container
 
         #region Public Methods
 
-        public override TSubService Add<TSubService>()
+        public override void Add<TSubService>()
         {
-            var instance = ResolveModuleInstance<TSubService>();
-            return instance;
+            ResolveModuleInstance<TSubService>();
         }
 
         public override bool Contains<TSubService>()
