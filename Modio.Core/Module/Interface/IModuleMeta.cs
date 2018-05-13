@@ -3,8 +3,8 @@
     public interface IModuleMeta
     {
         string HeadTitle { get; set; }
-        string HeadLines { get; set; }
-        string HeadLinesDesc { get; set; }
-        string ProfileImage { get; set; }
+        string ModuleDesc { get; set; }
+        string ModuleMessage { get; set; }
+        string ModuleImage { get; set; }
     }
 }

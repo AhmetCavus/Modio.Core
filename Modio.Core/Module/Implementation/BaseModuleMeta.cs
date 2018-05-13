@@ -3,8 +3,8 @@
     public class BaseModuleMeta : IModuleMeta
     {
         public string HeadTitle { get; set; }
-        public string HeadLines { get; set; }
-        public string HeadLinesDesc { get; set; }
-        public string ProfileImage { get; set; }
+        public string ModuleDesc { get; set; }
+        public string ModuleMessage { get; set; }
+        public string ModuleImage { get; set; }
     }
 }
